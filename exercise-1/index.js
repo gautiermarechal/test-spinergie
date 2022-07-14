@@ -1,0 +1,36 @@
+const config = require("./configuration.json");
+const changes = require("./changes.json");
+const changesObject = require("./changesObject.json");
+const fs = require("fs");
+
+function main(changesParam) {
+  const unparsedChangesFieldsList = Object.keys(changesParam);
+  const fieldsToChange = unparsedChangesFieldsList.map((field) =>
+    field.split(".")
+  );
+
+  const setNestedKey = (obj, path, value) => {
+    console.log(path);
+    if (path.length === 1) {
+      obj[path] = value;
+      return obj;
+    }
+    return setNestedKey(obj[path[0]], path.slice(1), value);
+  };
+
+  fieldsToChange.forEach((item, index) => {
+    return setNestedKey(
+      config,
+      item,
+      changesParam[unparsedChangesFieldsList[index]]
+    );
+  });
+  const jsonResult = JSON.stringify(config);
+
+  fs.writeFile("configuration.json", jsonResult, "utf8", function (err) {
+    if (err) throw err;
+    console.log("File successfully updated");
+  });
+}
+
+main(changesObject);
