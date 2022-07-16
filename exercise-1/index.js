@@ -10,7 +10,6 @@ function main(changesParam) {
   );
 
   const setNestedKey = (obj, path, value) => {
-    console.log(path);
     if (path.length === 1) {
       obj[path] = value;
       return obj;

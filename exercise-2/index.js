@@ -5,15 +5,13 @@ const fs = require("fs");
 function main(changesParam) {
   const unparsedChangesFieldsList = Object.keys(changesParam);
   const fieldsToChange = unparsedChangesFieldsList
-    .map((field) => field.split(/\[([0-9]+)\]/))
-    .map((line) => line.filter((key) => key !== ""));
+    .map((field) => field.split(/\[([0-9]+)\]|\./))
+    .map((line) => line.filter((key) => key !== "" && key !== undefined));
   const setNestedKey = (obj, path, value) => {
     if (path.length === 1) {
       if (isNaN(parseInt(path))) {
         obj[path] = value;
       } else {
-        console.log(obj);
-        console.log(parseInt(path));
         obj[parseInt(path)] = value;
       }
       return obj;
@@ -30,10 +28,10 @@ function main(changesParam) {
   });
   const jsonResult = JSON.stringify(config);
 
-  // fs.writeFile("configuration.json", jsonResult, "utf8", function (err) {
-  //   if (err) throw err;
-  //   console.log("File successfully updated");
-  // });
+  fs.writeFile("configuration.json", jsonResult, "utf8", function (err) {
+    if (err) throw err;
+    console.log("File successfully updated");
+  });
 }
 
 main(changes);
